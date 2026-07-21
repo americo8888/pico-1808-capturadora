@@ -5,7 +5,7 @@ on:
     branches: [ "main", "master" ]
   pull_request:
     branches: [ "main", "master" ]
-  workflow_dispatch: # Permite ejecutar el workflow manualmente desde GitHub
+  workflow_dispatch:
 
 jobs:
   build:
@@ -15,7 +15,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        submodules: 'recursive' # Descarga submódulos si los usas en el repo
+        submodules: 'recursive'
 
     - name: Install dependencies
       run: |
@@ -28,6 +28,8 @@ jobs:
         cd pico-sdk
         git submodule update --init
         echo "PICO_SDK_PATH=$GITHUB_WORKSPACE/pico-sdk" >> $GITHUB_ENV
+        # Copiamos el archivo pico_sdk_import.cmake al directorio del proyecto por si no está en la raíz
+        cp external/pico_sdk_import.cmake $GITHUB_WORKSPACE/
 
     - name: Configure CMake
       run: |
