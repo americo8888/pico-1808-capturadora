@@ -25,13 +25,11 @@ target_include_directories(pcm1808_stereo_mic PRIVATE
 
 target_link_libraries(pcm1808_stereo_mic
     pico_stdlib
-
     hardware_pio
     hardware_dma
     hardware_irq
     hardware_sync
     hardware_clocks
-
     tinyusb_device
     tinyusb_board
 )
