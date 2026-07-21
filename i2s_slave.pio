@@ -1,0 +1,31 @@
+.program i2s_slave_input
+
+; I2S Slave Input (Pico receives BCLK and LRCK)
+; Pin mapping (suggested):
+; - DATA: GPIO 10 (in pins)
+; - BCLK: GPIO 11 (wait pin 1)
+; - LRCK: GPIO 12 (wait pin 2)
+
+.wrap_target
+    wait 0 pin 2        ; Wait for LRCK to go low (Left channel start)
+    wait 0 pin 1        ; Wait for BCLK to go low
+    wait 1 pin 1        ; Wait for BCLK to go high (This is the 1-bit delay in I2S)
+
+    set x, 23           ; Read 24 bits
+left_loop:
+    wait 0 pin 1        ; Wait for BCLK low
+    wait 1 pin 1        ; Wait for BCLK high
+    in pins, 1          ; Sample DATA
+    jmp x-- left_loop
+
+    wait 1 pin 2        ; Wait for LRCK to go high (Right channel start)
+    wait 0 pin 1        ; Wait for BCLK to go low
+    wait 1 pin 1        ; Wait for BCLK to go high (1-bit delay)
+
+    set x, 23           ; Read 24 bits
+right_loop:
+    wait 0 pin 1        ; Wait for BCLK low
+    wait 1 pin 1        ; Wait for BCLK high
+    in pins, 1          ; Sample DATA
+    jmp x-- right_loop
+.wrap
