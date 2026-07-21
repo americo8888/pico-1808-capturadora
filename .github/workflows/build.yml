@@ -1,0 +1,50 @@
+name: Build Raspberry Pi Pico Firmware
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch: # Permite ejecutar el workflow manualmente desde GitHub
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: 'recursive' # Descarga submódulos si los usas en el repo
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential
+
+    - name: Setup Pico SDK
+      run: |
+        git clone -b master https://github.com/raspberrypi/pico-sdk.git --depth=1
+        cd pico-sdk
+        git submodule update --init
+        echo "PICO_SDK_PATH=$GITHUB_WORKSPACE/pico-sdk" >> $GITHUB_ENV
+
+    - name: Configure CMake
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+
+    - name: Build Firmware
+      run: |
+        cd build
+        make -j$(nproc)
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: pico-firmware
+        path: |
+          build/*.uf2
+          build/*.elf
+          build/*.bin
