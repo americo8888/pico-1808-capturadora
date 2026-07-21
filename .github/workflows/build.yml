@@ -24,11 +24,11 @@ jobs:
 
     - name: Setup Pico SDK
       run: |
-            git clone -b 1.5.1 https://github.com/raspberrypi/pico-sdk.git --depth=1
-            cd pico-sdk
-            git submodule update --init
-            echo "PICO_SDK_PATH=$GITHUB_WORKSPACE/pico-sdk" >> $GITHUB_ENV
-            cp external/pico_sdk_import.cmake $GITHUB_WORKSPACE/
+        git clone -b 1.5.1 https://github.com/raspberrypi/pico-sdk.git --depth=1
+        cd pico-sdk
+        git submodule update --init
+        echo "PICO_SDK_PATH=$GITHUB_WORKSPACE/pico-sdk" >> $GITHUB_ENV
+        cp external/pico_sdk_import.cmake $GITHUB_WORKSPACE/
 
     - name: Configure CMake
       run: |
